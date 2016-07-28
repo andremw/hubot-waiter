@@ -1,5 +1,5 @@
 {
-  "name": "hubot-jenkins",
+  "name": "hubot-waiter",
   "version": "0.0.1",
   "author": "Andre Mazoni <mazoni.andre@gmail.com>",
   "description": "A hubot integration with Jenkins",
