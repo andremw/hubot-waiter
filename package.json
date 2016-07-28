@@ -1,20 +1,54 @@
 {
   "name": "hubot-waiter",
-  "version": "0.0.4",
-  "author": "Andre Mazoni <mazoni.andre@gmail.com>",
   "description": "A hubot integration with Jenkins",
-  "dependencies": {
-    "hubot": "^2.19.0",
-    "hubot-diagnostics": "0.0.1",
-    "hubot-help": "^0.2.0",
-    "hubot-scripts": "^2.17.2"
+  "version": "0.0.5",
+  "author": "Andre Mazoni <mazoni.andre@gmail.com>",
+  "license": "MIT",
+
+  "keywords": "hubot, hubot-scripts, jenkins, ci",
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hubot-scripts/hubot-waiter.git"
   },
+
+  "bugs": {
+    "url": "https://github.com/hubot-scripts/hubot-waiter/issues"
+  },
+
+  "dependencies": {
+  },
+
+  "peerDependencies": {
+    "hubot": "2.x"
+  },
+
   "devDependencies": {
+    "hubot-test-helper": "^1.3.0",
+    "chai": "^2.1.1",
+    "coffee-script": "1.6.3",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-mocha-test": "~0.12.7",
+    "grunt-release": "~0.11.0",
+    "hubot": "2.x",
+    "matchdep": "~0.3.0",
+    "mocha": "^2.1.0",
+    "sinon": "^1.13.0",
+    "sinon-chai": "^2.7.0",
     "xo": "^0.16.0"
   },
+
   "xo": {
     "semicolon": true,
     "esnext": true,
     "space": 2
+  },
+
+  "main": "index.coffee",
+
+  "scripts": {
+    "test": "grunt test"
   }
 }
