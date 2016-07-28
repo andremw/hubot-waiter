@@ -1,6 +1,6 @@
 {
   "name": "hubot-waiter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "Andre Mazoni <mazoni.andre@gmail.com>",
   "description": "A hubot integration with Jenkins",
   "dependencies": {
