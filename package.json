@@ -1,0 +1,20 @@
+{
+  "name": "hubot-jenkins",
+  "version": "0.0.1",
+  "author": "Andre Mazoni <mazoni.andre@gmail.com>",
+  "description": "A hubot integration with Jenkins",
+  "dependencies": {
+    "hubot": "^2.19.0",
+    "hubot-diagnostics": "0.0.1",
+    "hubot-help": "^0.2.0",
+    "hubot-scripts": "^2.17.2"
+  },
+  "devDependencies": {
+    "xo": "^0.16.0"
+  },
+  "xo": {
+    "semicolon": true,
+    "esnext": true,
+    "space": 2
+  }
+}
