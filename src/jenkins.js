@@ -17,6 +17,7 @@
 const TOKEN = process.env.HUBOT_SLACK_TOKEN;
 const JENKINS_URL = process.env.HUBOT_JENKINS_URL;
 const aliases = require(`${__dirname}/alias`);
+const builder = require(`${__dirname}/build`);
 
 module.exports = robot => {
   robot.respond(/(?:list|build)/i, response => {
@@ -41,7 +42,15 @@ module.exports = robot => {
   });
 
   robot.respond(/build (.+) on (.+)/i, response => {
-    build(robot, response);
+    const buildParams = {
+      robot,
+      response,
+      aliases,
+      JENKINS_URL,
+      TOKEN
+    };
+
+    builder.build(buildParams);
   });
 
   robot.respond(/create alias (.+) for (.+)/i, response => {
@@ -84,24 +93,4 @@ function listJobs(robot, response) {
 
     response.send(formattedResponse);
   });
-}
-
-function build(robot, response) {
-  const commandParams = {
-    branch: response.match[1],
-    jobName: aliases.getJobNameFromAlias(robot, response.match[2]) || response.match[2]
-  };
-
-  const buildUrl = `${JENKINS_URL}/job/${commandParams.jobName}/buildWithParameters?token=${TOKEN}&BRANCH=${commandParams.branch}`;
-
-  robot
-    .http(buildUrl)
-    .get()((err, res) => {
-      if (err || res.statusCode !== 201) {
-        response.send(`Sorry, I could not trigger the build. Check the parameters and try again.`);
-        return;
-      }
-
-      response.send(`Building branch ${commandParams.branch} on ${commandParams.jobName}`);
-    });
 }
