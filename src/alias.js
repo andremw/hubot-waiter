@@ -22,7 +22,7 @@ module.exports = {
       return;
     }
     const aliasesResponse = aliases.reduce((msg, alias) => {
-      return `${msg}\n> ${alias.name} for ${alias.jobName}`;
+      return `${msg}\n> *${alias.name}* for ${alias.jobName}`;
     }, 'Here is the list of aliases:\n');
     response.send(aliasesResponse);
   },
