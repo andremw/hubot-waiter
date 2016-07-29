@@ -2,7 +2,7 @@
 
 A hubot integration with Jenkins
 
-See [`src/waiter.coffee`](src/waiter.coffee) for full documentation.
+See [`src/jenkins.js`](src/jenkins.js) for full documentation.
 
 ## Commands:
  * hubot jobs|list jobs [job name] - List the current jobs, filtering by the job name if needed
