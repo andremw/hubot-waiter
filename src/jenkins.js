@@ -11,6 +11,7 @@
 //    hubot create alias <alias> for <job name> - Creates an alias for the job
 //    hubot aliases|list aliases - Displays the list of aliases
 //    hubot remove alias <alias name> - Removes an alias
+//    hubot job status <job|alias name> - Displays the last status for the job.
 
 'use strict';
 
@@ -56,5 +57,10 @@ module.exports = robot => {
 
   robot.respond(/remove alias (.+)/i, response => {
     aliases.removeAlias(robot, response);
+  });
+
+  robot.respond(/job status (.+)/i, response => {
+    const jobName = aliases.getJobNameFromAlias(robot, response.match[1]) || response.match[1];
+    jobs.jobStatus({robot, response, JENKINS_URL, jobName});
   });
 };
