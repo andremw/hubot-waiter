@@ -20,17 +20,9 @@ const aliases = require(`${__dirname}/alias`);
 const builder = require(`${__dirname}/build`);
 
 module.exports = robot => {
-  robot.respond(/(?:list|build)/i, response => {
-    if (!TOKEN) {
-      response.send(createMissingVariableErrorMessage('HUBOT_SLACK_TOKEN'));
-    }
-    if (!JENKINS_URL) {
-      response.send(createMissingVariableErrorMessage('HUBOT_JENKINS_URL'));
-    }
-  });
-
   if (!TOKEN || !JENKINS_URL) {
-    return;
+    robot.logger.error(`Please make sure the required environment variables are all set.`);
+    throw new Error(`Please make sure the required environment variables are all set.`);
   }
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
