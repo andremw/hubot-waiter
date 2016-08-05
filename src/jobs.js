@@ -41,7 +41,7 @@ module.exports = {
       }
 
       const jobJson = JSON.parse(body);
-      const healthReport = jobJson.healthReport[0];
+      const healthReport = jobJson.healthReport[0] || {};
 
       const healthResponse = {
         text: `Here's the health status for ${jobName}:`,
@@ -54,7 +54,7 @@ module.exports = {
             text: healthReport.description,
             footer: 'Jenkins API',
             footer_icon: `${params.JENKINS_URL}/static/aeb9cf3a/images/32x32/${healthReport.iconUrl}`,
-            ts: new Date().getTime()
+            ts: getUnixTime()
           }
         ],
         as_user: true
@@ -66,8 +66,14 @@ module.exports = {
 };
 
 function getMessageColor(jobJson) {
-  if (jobJson.lastBuild.number === jobJson.lastFailedBuild.number) {
+  const lastBuild = jobJson.lastBuild || {number: 0};
+  const lastFailedBuild = jobJson.lastFailedBuild || {};
+  if (lastBuild.number === lastFailedBuild.number) {
     return 'danger';
   }
   return 'good';
+}
+
+function getUnixTime() {
+  return Math.floor(new Date().getTime() / 1000);
 }
