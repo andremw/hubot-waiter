@@ -56,7 +56,8 @@ module.exports = {
             footer_icon: `${params.JENKINS_URL}/static/aeb9cf3a/images/32x32/${healthReport.iconUrl}`,
             ts: new Date().getTime()
           }
-        ]
+        ],
+        as_user: true
       };
 
       params.response.send(healthResponse);
