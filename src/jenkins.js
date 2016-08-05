@@ -18,6 +18,7 @@ const TOKEN = process.env.HUBOT_SLACK_TOKEN;
 const JENKINS_URL = process.env.HUBOT_JENKINS_URL;
 const aliases = require(`${__dirname}/alias`);
 const builder = require(`${__dirname}/build`);
+const jobs = require(`${__dirname}/jobs`);
 
 module.exports = robot => {
   if (!TOKEN || !JENKINS_URL) {
@@ -26,11 +27,11 @@ module.exports = robot => {
   }
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
-    listJobs(robot, response);
+    jobs.listJobs({robot, response, JENKINS_URL});
   });
 
   robot.respond(/build (\w+)-(\w+)-(.+)/i, response => {
-    response.send('This command is not supported anymore. Please use build {branch} on {jobName}');
+    response.send('This command is not supported anymore. Please use build <branch> on <job name|job alias>');
   });
 
   robot.respond(/build (.+) on (.+)/i, response => {
@@ -57,32 +58,3 @@ module.exports = robot => {
     aliases.removeAlias(robot, response);
   });
 };
-
-function createMissingVariableErrorMessage(variableName) {
-  return `Missing ${variableName} in environment. Please set it and try again.`;
-}
-
-function listJobs(robot, response) {
-  const jobFilter = response.match[1].trim();
-
-  robot.http(`${JENKINS_URL}/api/json`).get()((err, res, body) => {
-    if (err) {
-      console.log(err);
-      response.send('Sorry, I could not get the list of jobs.');
-      return;
-    }
-
-    let jobs = JSON.parse(body).jobs;
-
-    if (jobFilter) {
-      const regex = new RegExp(jobFilter, 'i');
-      jobs = jobs.filter(job => regex.test(job.name));
-    }
-
-    const formattedResponse = jobs.reduce((msg, job) => {
-      return `${msg}\n> ${job.name}`;
-    }, 'Here is the list of jobs:\n');
-
-    response.send(formattedResponse);
-  });
-}
