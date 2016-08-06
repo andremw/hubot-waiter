@@ -44,7 +44,6 @@ module.exports = {
       const healthReport = jobJson.healthReport[0] || {};
 
       const healthResponse = {
-        text: `Here's the health status for ${jobName}:`,
         attachments: [
           {
             fallback: healthReport.description,
