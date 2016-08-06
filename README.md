@@ -10,6 +10,7 @@ See [`src/jenkins.js`](src/jenkins.js) for full documentation.
  * hubot create alias <alias> for <job name> - Creates an alias for the job
  * hubot aliases|list aliases - Displays the list of aliases
  * hubot remove alias <alias name> - Removes an alias
+ * hubot job status <job|alias name> - Displays the last status for the job.
 
 ## Installation
 
