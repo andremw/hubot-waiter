@@ -21,6 +21,7 @@ const JENKINS_URL = process.env.HUBOT_JENKINS_URL;
 const aliases = require(`${__dirname}/alias`);
 const builder = require(`${__dirname}/build`);
 const jobs = require(`${__dirname}/jobs`);
+const api = require(`${__dirname}/api`);
 
 module.exports = robot => {
   if (!TOKEN || !JENKINS_URL) {
@@ -28,10 +29,24 @@ module.exports = robot => {
     throw new Error(`Please make sure the required environment variables are all set.`);
   }
 
+  const jenkinsApi = api({
+    http: robot.http.bind(robot),
+    storage: robot.brain,
+    domain: JENKINS_URL,
+    logger: robot.logger
+  });
+
   robot.respond(/jenkins auth (.[^\s]+)\s(.[^\s]+)/i, response => {
     const user = response.match[1];
     const apiKey = response.match[2];
-    authenticate({robot, response, user, apiKey});
+    jenkinsApi
+      .authenticate({robot, response, user, apiKey})
+      .then(result => {
+        response.send(result);
+      })
+      .catch(err => {
+        response.send(err);
+      });
   });
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
@@ -71,25 +86,3 @@ module.exports = robot => {
     jobs.jobStatus({robot, response, JENKINS_URL, jobName});
   });
 };
-
-function authenticate(params) {
-  const url = `${JENKINS_URL}/api/json`;
-  params.robot.http(url)
-    .auth(params.user, params.apiKey)
-    .get()((err, res) => {
-      if (err) {
-        params.response.send(`Couldn't authenticate. Got this error: ${err}`);
-      }
-      if (res.statusCode !== 200) {
-        params.response.send(`Got a ${res.statusCode} while authenticating: ${res.statusMessage}`);
-      }
-      const jenkinsWaiter = Object.assign({credentials: {}}, params.robot.brain.get('jenkinsWaiter'));
-      jenkinsWaiter.credentials[params.response.message.user] = {
-        user: params.user,
-        apiKey: params.apiKey
-      };
-      params.robot.brain.set('jenkinsWaiter', jenkinsWaiter);
-      params.robot.logger.info(`Authenticated ${JSON.stringify(params.response.message.user)} with these credentials: ${JSON.stringify(jenkinsWaiter.credentials)}`);
-      params.response.send(`You're authenticated now. I'll use your credentials for all the commands you give me.`);
-    });
-}
