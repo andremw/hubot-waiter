@@ -12,6 +12,7 @@
 //    hubot aliases|list aliases - Displays the list of aliases
 //    hubot remove alias <alias name> - Removes an alias
 //    hubot job status <job|alias name> - Displays the last status for the job.
+//    hubot jenkins auth <user> <apiKey> - Authenticate on Jenkins
 
 'use strict';
 
@@ -26,6 +27,12 @@ module.exports = robot => {
     robot.logger.error(`Please make sure the required environment variables are all set.`);
     throw new Error(`Please make sure the required environment variables are all set.`);
   }
+
+  robot.respond(/jenkins auth (.[^\s]+)\s(.[^\s]+)/i, response => {
+    const user = response.match[1];
+    const apiKey = response.match[2];
+    authenticate({robot, response, user, apiKey});
+  });
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
     jobs.listJobs({robot, response, JENKINS_URL});
@@ -64,3 +71,25 @@ module.exports = robot => {
     jobs.jobStatus({robot, response, JENKINS_URL, jobName});
   });
 };
+
+function authenticate(params) {
+  const url = `${JENKINS_URL}/api/json`;
+  params.robot.http(url)
+    .auth(params.user, params.apiKey)
+    .get()((err, res) => {
+      if (err) {
+        params.response.send(`Couldn't authenticate. Got this error: ${err}`);
+      }
+      if (res.statusCode !== 200) {
+        params.response.send(`Got a ${res.statusCode} while authenticating: ${res.statusMessage}`);
+      }
+      const jenkinsWaiter = Object.assign({credentials: {}}, params.robot.brain.get('jenkinsWaiter'));
+      jenkinsWaiter.credentials[params.response.message.user] = {
+        user: params.user,
+        apiKey: params.apiKey
+      };
+      params.robot.brain.set('jenkinsWaiter', jenkinsWaiter);
+      params.robot.logger.info(`Authenticated ${JSON.stringify(params.response.message.user)} with these credentials: ${JSON.stringify(jenkinsWaiter.credentials)}`);
+      params.response.send(`You're authenticated now. I'll use your credentials for all the commands you give me.`);
+    });
+}
