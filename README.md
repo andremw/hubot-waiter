@@ -1,6 +1,6 @@
 # hubot-waiter
 
-A hubot integration with Jenkins
+A hubot integration with Jenkins that enables deploying code via your preferred chat using a bot.
 
 See [`src/jenkins.js`](src/jenkins.js) for full documentation.
 
@@ -25,6 +25,11 @@ Then add **hubot-waiter** to your `external-scripts.json`:
   "hubot-waiter"
 ]
 ```
+
+**For the build command to work, your jenkins instance needs to have [Build Token Root Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Build+Token+Root+Plugin) installed.**
+
+There's a known problem in Jenkins that doesn't allow scripts to run in a protected instance (an instance that doesn't allow an anonymous to see anything), thus the need to use the above plugin.
+The problem is that there isn't a plugin that enable other commands (job status, list jobs). I still have to find a solution to this problem.
 
 ## Configuration
 
