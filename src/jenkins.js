@@ -41,12 +41,8 @@ module.exports = robot => {
     const apiKey = response.match[2];
     jenkinsApi
       .authenticate({robot, response, user, apiKey})
-      .then(result => {
-        response.send(result);
-      })
-      .catch(err => {
-        response.send(err);
-      });
+      .then(result => response.send(result))
+      .catch(err => response.send(err));
   });
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
