@@ -10,17 +10,18 @@ function build(params) {
     jobName: params.aliases.getJobNameFromAlias(params.robot, params.response.match[2]) || params.response.match[2]
   };
 
-  params.robot.logger.info(`jenkinsWaiter: ${JSON.stringify(params.robot.brain.get('jenkinsWaiter'))}`);
   const user = params.response.message.user;
   const credentials = (params.robot.brain.get('jenkinsWaiter') || {credentials: {}}).credentials[user] || {};
 
-  const buildUrl = `${params.JENKINS_URL}/job/${commandParams.jobName}/buildWithParameters?token=${params.TOKEN}&BRANCH=${commandParams.branch}`;
+  const buildUrl = `${params.JENKINS_URL}/buildByToken/buildWithParameters?job=${commandParams.jobName}&token=${params.TOKEN}&BRANCH=${commandParams.branch}`;
 
-  params.robot.logger.info(`Logging work with ${credentials.user}/${credentials.apiKey}`);
+  params.robot.logger.info(`Building with ${credentials.user}/${credentials.apiKey}. Request made to ${buildUrl}`);
   params.robot
     .http(buildUrl)
     .auth(credentials.user, credentials.apiKey)
     .get()((err, res) => {
+      params.robot.logger.info(`Tried to build.\nErr: ${err}\nStatusCode: ${res.statusCode}\nStatus Message: ${res.statusMessage}`);
+
       if (err) {
         return params.response.send(`Got an error: ${err}`);
       }
