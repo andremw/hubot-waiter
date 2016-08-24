@@ -12,6 +12,7 @@
 //    hubot aliases|list aliases - Displays the list of aliases
 //    hubot remove alias <alias name> - Removes an alias
 //    hubot job status <job|alias name> - Displays the last status for the job.
+//    hubot jenkins auth <user> <apiKey> - Authenticate on Jenkins
 
 'use strict';
 
@@ -20,12 +21,31 @@ const JENKINS_URL = process.env.HUBOT_JENKINS_URL;
 const aliases = require(`${__dirname}/alias`);
 const builder = require(`${__dirname}/build`);
 const jobs = require(`${__dirname}/jobs`);
+const api = require(`${__dirname}/api`);
 
 module.exports = robot => {
   if (!TOKEN || !JENKINS_URL) {
     robot.logger.error(`Please make sure the required environment variables are all set.`);
     throw new Error(`Please make sure the required environment variables are all set.`);
   }
+
+  const jenkinsApi = api({
+    http: robot.http.bind(robot),
+    storage: robot.brain,
+    domain: JENKINS_URL,
+    logger: robot.logger
+  });
+
+  robot.respond(/jenkins auth (.[^\s]+)\s(.[^\s]+)/i, response => {
+    const user = response.match[1];
+    const apiKey = response.match[2];
+    const chatUserId = response.message.user.id;
+
+    jenkinsApi
+      .authenticate({chatUserId, user, apiKey})
+      .then(result => response.send(result))
+      .catch(err => response.send(err));
+  });
 
   robot.respond(/(?:list jobs|jobs)\s*(.*)/i, response => {
     jobs.listJobs({robot, response, JENKINS_URL});
