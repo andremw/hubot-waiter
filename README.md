@@ -5,6 +5,7 @@ A hubot integration with Jenkins that enables deploying code via your preferred 
 See [`src/jenkins.js`](src/jenkins.js) for full documentation.
 
 ## Commands:
+ * hubot jenkins auth <user> <apiKey> - Authenticate on Jenkins
  * hubot jobs|list jobs [job name] - List the current jobs, filtering by the job name if needed
  * hubot build <branch> on <job name> - Builds branch on the environment specified by the job
  * hubot create alias <alias> for <job name> - Creates an alias for the job
