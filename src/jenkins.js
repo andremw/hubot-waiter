@@ -39,8 +39,10 @@ module.exports = robot => {
   robot.respond(/jenkins auth (.[^\s]+)\s(.[^\s]+)/i, response => {
     const user = response.match[1];
     const apiKey = response.match[2];
+    const chatUserId = response.message.user.id;
+
     jenkinsApi
-      .authenticate({chatUserId: response.message.user.id, user, apiKey})
+      .authenticate({chatUserId, user, apiKey})
       .then(result => response.send(result))
       .catch(err => response.send(err));
   });
