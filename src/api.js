@@ -10,6 +10,11 @@ module.exports = function jenkinsApi(config) {
     authenticate
   };
 
+  /**
+   * Authenticates the user by saving his credentials to the storage (user/apiKey)
+   * @param  {Object} params [description]
+   * @return {Promise}        A resolved/reject promise with the result message.
+   */
   function authenticate(params) {
     return new Promise((resolve, reject) => {
       logger.info(`Authenticating ${params.user}`);
@@ -32,7 +37,7 @@ module.exports = function jenkinsApi(config) {
           apiKey: params.apiKey
         };
         storage.set('jenkinsWaiter', jenkinsWaiter);
-        logger.info(`Authenticated ${JSON.stringify(params.response.message.user)}`);
+        logger.info(`Authenticated ${JSON.stringify(params.response.message.user.name)} on Jenkins.`);
         resolve(`You're authenticated now. I'll use your credentials for all the commands you give me.`);
       });
     });
